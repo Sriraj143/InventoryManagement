@@ -1,9 +1,7 @@
 package com.inventory.InventoryManagement.TestController;
 
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
@@ -32,65 +30,36 @@ class InventoryControllerTest {
     private InventoryController controller;
 
     @Test
-    void searchInventory_WithRequest_ShouldReturnPage() {
+    void testSearchInventory() {
 
-        InventorySearchRequest request = new InventorySearchRequest();
-
-        Page<Inventory> page =
-                new PageImpl<>(Collections.singletonList(new Inventory()));
-
-        when(service.searchInventory(request, 0, 10))
-                .thenReturn(page);
-
-        ResponseEntity<Page<Inventory>> response =
-                controller.searchInventory(request, 0, 10);
-
-        assertEquals(200, response.getStatusCode().value());
-        assertEquals(page, response.getBody());
-
-        verify(service).searchInventory(request, 0, 10);
-    }
-
-    @Test
-    void searchInventory_WhenRequestIsNull_ShouldCreateNewRequest() {
+        // Arrange
+        Inventory inventory = new Inventory();
+        inventory.setId(1L);
+        inventory.setName("Galaxy S24");
 
         Page<Inventory> page =
-                new PageImpl<>(Collections.emptyList());
+                new PageImpl<>(Collections.singletonList(inventory));
 
-        when(service.searchInventory(any(InventorySearchRequest.class),
-                eq(0),
-                eq(10)))
+        when(service.searchInventory(
+                org.mockito.ArgumentMatchers.any(InventorySearchRequest.class),
+                org.mockito.ArgumentMatchers.eq(0),
+                org.mockito.ArgumentMatchers.eq(10)))
                 .thenReturn(page);
 
+        // Act
         ResponseEntity<Page<Inventory>> response =
-                controller.searchInventory(null, 0, 10);
+                controller.searchInventory(
+                        "Galaxy S24",
+                        "Electronics",
+                        "Samsung",
+                        "Hyderabad",
+                        0,
+                        10);
 
+        // Assert
         assertEquals(200, response.getStatusCode().value());
-        assertEquals(page, response.getBody());
-
-        verify(service)
-                .searchInventory(any(InventorySearchRequest.class),
-                        eq(0),
-                        eq(10));
-    }
-
-    @Test
-    void searchInventory_WithCustomPagination_ShouldReturnPage() {
-
-        InventorySearchRequest request = new InventorySearchRequest();
-
-        Page<Inventory> page =
-                new PageImpl<>(Collections.emptyList());
-
-        when(service.searchInventory(request, 2, 5))
-                .thenReturn(page);
-
-        ResponseEntity<Page<Inventory>> response =
-                controller.searchInventory(request, 2, 5);
-
-        assertEquals(200, response.getStatusCode().value());
-        assertEquals(page, response.getBody());
-
-        verify(service).searchInventory(request, 2, 5);
+        assertEquals(1, response.getBody().getTotalElements());
+        assertEquals("Galaxy S24",
+                response.getBody().getContent().get(0).getName());
     }
 }

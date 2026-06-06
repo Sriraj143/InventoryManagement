@@ -25,27 +25,46 @@ public class InventoryController {
 
 	@Autowired
     private InventoryService service;
+	
+	@GetMapping("/search")
+	public ResponseEntity<Page<Inventory>> searchInventory(
+	        @RequestParam(required = false) String name,
+	        @RequestParam(required = false) String category,
+	        @RequestParam(required = false) String brand,
+	        @RequestParam(required = false) String location,
+	        @RequestParam(defaultValue = "0") int page,
+	        @RequestParam(defaultValue = "10") int size) {
 
-    @GetMapping("/search")
-    public ResponseEntity<Page<Inventory>> searchInventory(
+	    InventorySearchRequest request = new InventorySearchRequest();
+	    request.setName(name);
+	    request.setCategory(category);
+	    request.setBrand(brand);
+	    request.setLocation(location);
 
-            @RequestBody(required = false)
-            InventorySearchRequest request,
+	    return ResponseEntity.ok(
+	            service.searchInventory(request, page, size));
+	}
 
-            @RequestParam(defaultValue = "0")
-            int page,
-
-            @RequestParam(defaultValue = "10")
-            int size) {
-
-        if(request == null){
-            request = new InventorySearchRequest();
-        }
-
-        return ResponseEntity.ok(
-                service.searchInventory(
-                        request,
-                        page,
-                        size));
-    }
+//    @GetMapping("/search")
+//    public ResponseEntity<Page<Inventory>> searchInventory(
+//
+//            @RequestBody(required = false)
+//            InventorySearchRequest request,
+//
+//            @RequestParam(defaultValue = "0")
+//            int page,
+//
+//            @RequestParam(defaultValue = "10")
+//            int size) {
+//
+//        if(request == null){
+//            request = new InventorySearchRequest();
+//        }
+//
+//        return ResponseEntity.ok(
+//                service.searchInventory(
+//                        request,
+//                        page,
+//                        size));
+//    }
 }
