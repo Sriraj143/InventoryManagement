@@ -29,9 +29,9 @@ public class InventoryServiceImpl implements InventoryService {
         Pageable pageable =
                 PageRequest.of(page, size);
 
-        return repository.findAll(pageable);
-//                InventorySpecification
-//                        .searchInventory(request),
-//                pageable);
+        return repository.findAll(
+                InventorySpecification
+                        .searchInventory(request),
+                pageable);
     }
 }
